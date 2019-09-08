@@ -1,39 +1,36 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Layout from '../Layout';
 import PromptArea from '../PromptArea';
 import Report from '../Report';
+import { ethers } from 'ethers';
 import { Button } from '@material-ui/core';
 
-const Widget = ({ dappAddress, account, hat }) => {
+const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider, tributeFlowing, setTributeFlowing }) => {
   const prompt = 'To access';
   const providerName = 'Super Marzio';
   const principal = 500;
   const tributeRequired = 100;
   const flowTotal = 0;
-  let isTributeFlowing = true;
 
-  const startTribute = () => event => {
-    //start tribute
-    console.log('Starting tribute');
-    isTributeFlowing = true;
-  };
+  let signer = provider.getSigner()
+  let contract = new ethers.Contract(rDAIAddress, rDAIContractAbi, signer);
 
-  const endTribute = () => {
-    //end tribute
-  };
+  async function toggleTribute() {
 
-  const getButton = () => {
-    let action = startTribute();
-    let text = 'Allocate';
-    if (isTributeFlowing) {
-      action = endTribute();
-      text = 'End Tribute';
+    console.log(contract)
+
+    if(tributeFlowing) {
+      //19 is unallocated
+      let tx = contract.changeHat(19)
+      tx = await signer.sendTransaction(tx)
+    } else {
+      //18 is allocated
+      let tx = contract.changeHat(18)
+      tx = await signer.sendTransaction(tx)
     }
-    return (
-      <Button size="large" variant="contained" color="primary" onClick={action}>
-        {text}
-      </Button>
-    );
+    //tribute flowing is now off, turn it off
+    console.log(!tributeFlowing)
+    setTributeFlowing(!tributeFlowing)
   };
 
   return (
@@ -43,9 +40,11 @@ const Widget = ({ dappAddress, account, hat }) => {
           providerName={providerName}
           principal={principal}
           tributeRequired={tributeRequired}
-          isTributeFlowing={isTributeFlowing}
+          isTributeFlowing={tributeFlowing}
         />
-        {getButton()}
+        <Button size="large" variant="contained" color="primary" onClick={toggleTribute}>
+          { tributeFlowing ? "End Tribute" : "Allocate Tribute" }
+        </Button>
         <Report flowTotal={flowTotal} providerName={providerName} />
       </Layout>
     </div>

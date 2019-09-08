@@ -3,61 +3,61 @@ import { ethers } from 'ethers';
 
 import urnFull from './assets/urn-full.png';
 import urn from './assets/urn.png';
-import web3 from './ethereum/web3';
 import rDAIContract from './contracts/rDAI.abi.json';
 import Widget from './components/Widget';
 import { Button, Popover, Typography } from '@material-ui/core';
 
 function App() {
-  const [ethersState, setEthersState] = useState({
-    selectedAddress: ''
-  });
+  const [selectedAddress, setSelectedAddress] = useState();
+  const [provider, setProvider] = useState();
+  const [hat, setHat] = useState();
   const RDAI_ADDRESS = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
   const DAPP_ADDRESS = '0x1EEEe046f7722b0C7F04eCc457Dc5CF69f4fbA99';
-  const isTributeFlowing = true;
+  const [tributeFlowing, setTributeFlowing] = useState(false);
+
+  useEffect(() => {
+    if (typeof window.ethereum !== 'undefined'
+      || (typeof window.web3 !== 'undefined')) {
+      console.log(window.web3.version);
+      // Web3 browser user detected. You can now use the provider.
+      let provider = window['ethereum'] || window.web3.currentProvider
+      //NOTE: must wrap window.etherm to get provider, not window.web3
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
+      let address = getAccount();
+      getHatByAddress(address, provider)
+    }
+  }, []);
 
   async function getAccount() {
     try {
-      if (ethersState.selectedAddress === undefined) {
+      if (selectedAddress === undefined) {
         console.log('No selected address, requesting log in');
         let account = await window.ethereum.enable();
         console.log('Selected Address is: ' + account[0]);
-        setEthersState({
-          ...ethersState,
-          selectedAddress: account[0]
-        });
+        setSelectedAddress(account[0])
+        return account[0]
       } else {
-        console.log('Selected Address is: ' + ethersState.selectedAddress);
+        console.log('Selected Address is: ' + selectedAddress);
+        return selectedAddress
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  async function getHatByAddress() {
-    if (
-      typeof window.ethereum !== 'undefined' ||
-      typeof window.web3 !== 'undefined'
-    ) {
-      console.log(window.web3.version);
-      // Web3 browser user detected. You can now use the provider.
-      let provider = window['ethereum'] || window.web3.currentProvider;
-      //NOTE: must wrap window.etherm to get provider, not window.web3
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
-
-      let hat = await contract.getHatByAddress(ethersState.selectedAddress);
-      console.log(hat);
-      setEthersState({
-        ...ethersState,
-        hat: hat
-      });
+  async function getHatByAddress(selectedAddress, provider) {
+    let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
+    let hat = await contract.getHatByAddress(selectedAddress);
+    if (hat.hatID.toNumber() === 18) {
+      setTributeFlowing(true)
     }
+    setHat(hat)
   }
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   function handleClick(event) {
-    getHatByAddress();
+    getHatByAddress(selectedAddress, provider);
     getAccount();
     setAnchorEl(event.currentTarget);
   }
@@ -78,7 +78,7 @@ function App() {
         onClick={handleClick}
       >
         <img
-          src={isTributeFlowing ? urnFull : urn}
+          src={tributeFlowing ? urnFull : urn}
           width={20}
           style={{ paddingRight: 5 }}
         />{' '}
@@ -100,9 +100,14 @@ function App() {
         }}
       >
         <Widget
-          hat={ethersState.hat}
+          hat={hat}
           dappAddress={DAPP_ADDRESS}
-          account={ethersState.selectedAddress}
+          rDAIAddress={RDAI_ADDRESS}
+          rDAIContractAbi={rDAIContract}
+          account={selectedAddress}
+          provider={provider}
+          tributeFlowing={tributeFlowing}
+          setTributeFlowing={setTributeFlowing}
         />
       </Popover>
     </div>
