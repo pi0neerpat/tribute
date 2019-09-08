@@ -7,8 +7,6 @@ import rDAIContract from './contracts/rDAI.abi.json'
 function View() {
   const [ethersContext, setEthersContext] = useContext(EthersContext);
   const [selectedAddress, setSelectedAddress] = useState();
-  const [unallocated, setUnallocated] = useState();
-  const [balance, setBalance] = useState();
   const rDAIAddress = "0xeA718E4602125407fAfcb721b7D760aD9652dfe7";
 
   // Detect when account changes
@@ -31,14 +29,19 @@ function View() {
       if (ethersContext.contract === undefined) {
         setEthersContext(state => ({ ...ethersContext, contract }));
       }
+      getAccount();
     }
-  }, [ethersContext]);
+  }, []);
 
+
+  const [allocated, setAllocated] = useState();
+  const [balance, setBalance] = useState();
   useEffect(() => {
-    getAccount();
-    getUnallocatedTribute();
-    getBalanceOf();
-  }, [])
+    if(selectedAddress !== undefined) {
+      getAllocatedTribute();
+      getBalanceOf();
+    }
+  }, [selectedAddress])
 
   async function getAccount() {
     try {
@@ -55,38 +58,29 @@ function View() {
     }
   }
 
-  async function getHatByAddress(address) {
-    if (ethersContext.contract !== undefined) {
-      let hat = await ethersContext.contract.getHatByAddress(address);
-      return hat
-    }
-  }
-
-  async function getUnallocatedTribute() {
-    if (ethersContext.contract === undefined) {
-      setUnallocated(0)
-    }
-
-    let hat = await getHatByAddress(selectedAddress);
-    //console.log(hat)
-    if (hat.recipients[0].toUpperCase() === selectedAddress.toUpperCase()) {
-      setUnallocated(hat.proportions[0])
-    }
-    setUnallocated(0)
-  }
-
   async function getBalanceOf() {
     if (ethersContext.contract !== undefined) {
       let principal = await ethersContext.contract.balanceOf(selectedAddress);
       setBalance(principal)
+      console.log(principal)
     }
   }
+
+  async function getAllocatedTribute() {
+    let hat = await ethersContext.contract.getHatByAddress(selectedAddress);
+    if (hat !== undefined) {
+      setAllocated(hat.proportions[0])
+    }
+    setAllocated(0)
+    console.log(hat.proportions[0])
+  }
+
 
   return (
     <div>
       <TributeTotals 
         principal = { balance }
-        unallocated = { unallocated }
+        unallocated = { allocated }
       />
       <div>
         hat data
