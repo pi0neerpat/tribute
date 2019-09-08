@@ -27,7 +27,7 @@ const Layout = props => (
         <Button
           size="small"
           onClick={() => {
-            window.open('https://tribute-dashboard.surge.sh');
+            window.open('https://tribute-dash.surge.sh');
           }}
           style={{ marginRight: 10 }}
           variant="contained"
