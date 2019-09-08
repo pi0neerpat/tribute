@@ -7,7 +7,7 @@ import TributeInactive from './TributeInactive';
 //import AdminTools from './AdminTools';
 import rDAIContract from './contracts/rDAI.abi.json';
 
-import { Button, Typography, Grid } from '@material-ui/core';
+import { Button, Typography, Grid, Divider } from '@material-ui/core';
 
 import github from './assets/github.png';
 import urn from './assets/urn.png';
@@ -19,28 +19,28 @@ function View() {
   const rDAIAddress = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
   let services = [
     {
-      name: 'VideoStreamr',
-      address: '0x1EEEe046f7722b0C7F04eCc457Dc5CF69f4fbA99',
+      name: 'Super Marzio',
+      address: '0x2243cE6fE34ca1e457c5f174be3eCdf8Ae08516f',
       status: false,
-      tributeRequired: 10
+      tributeRequired: 876
     },
     {
       name: 'Dev Tool Suite',
-      address: '0x0cba34',
+      address: '0xe179269981E841129e07623720f32f55FF0AF9AB',
       status: false,
-      tributeRequired: 90
+      tributeRequired: 521
     },
     {
       name: 'Times newspaper',
       address: '0xafbd',
       status: false,
-      tributeRequired: 100
+      tributeRequired: 200
     },
     {
       name: 'Audio Books Galore',
       address: '0x7dfa2',
       status: false,
-      tributeRequired: 300
+      tributeRequired: 164
     }
   ];
 
@@ -152,10 +152,21 @@ function View() {
         {balance !== undefined &&
           allocated !== undefined &&
           renderTributeTotals()}
-        {balance !== undefined &&
-            hats !== undefined && renderFlows()}
+        {balance !== undefined && hats !== undefined && renderFlows()}
         <TributeInactive services={services} />
-
+        <div style={{ display: 'flex', alignContent: 'center' }}>
+          <Typography style={{ margin: '10px 0 0 10px' }} variant="h6">
+            <br />
+            Admin Tools
+          </Typography>
+          <Button
+            style={{ marginTop: 50, height: 30 }}
+            variant="contained"
+            size="small"
+          >
+            Withdraw DAI
+          </Button>
+        </div>
         <Button
           size="small"
           variant="contained"

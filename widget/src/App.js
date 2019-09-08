@@ -94,6 +94,7 @@ function App() {
             🎮 Gamez.com
           </Typography>
           <Button
+            style={{ margin: '0 0 0 50px' }}
             size="large"
             aria-describedby={id}
             variant="contained"

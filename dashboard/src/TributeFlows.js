@@ -3,6 +3,7 @@ import { Grid, Button, Typography, Card } from '@material-ui/core';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
+import TableHead from '@material-ui/core/TableHead';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 
@@ -47,6 +48,13 @@ export default function TributeFlows({ principal, hats, services }) {
         </Typography>
       </div>
       <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Publisher</TableCell>
+            <TableCell>Address</TableCell>
+            <TableCell align="right">Tribute Required</TableCell>
+          </TableRow>
+        </TableHead>
         <TableBody>
           {hats.recipients.map((hat, index) => {
             if (index === 0) return;

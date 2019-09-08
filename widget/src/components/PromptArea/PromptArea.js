@@ -9,9 +9,6 @@ const getTributePrompt1 = name => {
     </Typography>
   );
 };
-const getTributePrompt2 = amount => {
-  return `of your ${amount} Unallocated DAI, while you have access.`;
-};
 
 const getTributePrompt3 = name => {
   return `DAI tokens will never leave your wallet.\nThe interest from this tribute will flow to ${name} until you choose to end the tribute.`;
@@ -43,7 +40,9 @@ const PromptArea = ({
             <b>{tributeRequired} DAI</b>
           </Typography>
         </Card>
-        <Typography variant="body1">{getTributePrompt2(principal)}</Typography>
+        <Typography variant="body1">
+          of your <b>{principal}</b> Unallocated DAI.
+        </Typography>
         <Card style={{ margin: 10, padding: 10, backgroundColor: '#ECEAEC' }}>
           <Typography
             variant="caption"
