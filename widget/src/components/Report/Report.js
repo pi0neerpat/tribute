@@ -11,6 +11,6 @@ const Report = ({ flowTotal }) => {
       </div>
     );
   }
-  return {};
+  return <div />;
 };
 export default Report;

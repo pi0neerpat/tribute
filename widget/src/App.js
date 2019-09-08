@@ -1,54 +1,96 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Layout from './components/Layout';
-import PromptArea from './components/PromptArea';
-import Report from './components/Report';
+import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 
-import { Button } from '@material-ui/core';
+import web3 from './ethereum/web3';
+import rDAIContract from './contracts/rDAI.abi.json';
+import Widget from './components/Widget';
+import { Button, Popover, Typography } from '@material-ui/core';
 
 function App() {
-  const prompt = 'To access';
-  const providerName = 'Mario Broskis';
-  const principal = 500;
-  const tributeRequired = 100;
-  const flowTotal = 0;
-  const isTributeFlowing = false;
+  const [ethersState, setEthersState] = useState({
+    selectedAddress: ''
+  });
+  const RDAI_ADDRESS = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
+  const DAPP_ADDRESS = '0x1EEEe046f7722b0C7F04eCc457Dc5CF69f4fbA99';
 
-  const startTribute = () => {
-    //start tribute
-  };
-
-  const endTribute = () => {
-    //end tribute
-  };
-
-  const getButton = () => {
-    let action = startTribute();
-    let text = 'Allocate';
-    if (isTributeFlowing) {
-      action = endTribute();
-      text = 'End Tribute';
+  async function getAccount() {
+    try {
+      if (ethersState.selectedAddress === undefined) {
+        console.log('No selected address, requesting log in');
+        let account = await window.ethereum.enable();
+        console.log('Selected Address is: ' + account[0]);
+        setEthersState({
+          ...ethersState,
+          selectedAddress: account[0]
+        });
+      } else {
+        console.log('Selected Address is: ' + ethersState.selectedAddress);
+      }
+    } catch (error) {
+      console.log(error);
     }
-    return (
-      <Button variant="contained" color="primary" onClick={action}>
-        {text}
-      </Button>
-    );
-  };
+  }
+
+  async function getHatByAddress() {
+    if (
+      typeof window.ethereum !== 'undefined' ||
+      typeof window.web3 !== 'undefined'
+    ) {
+      console.log(window.web3.version);
+      // Web3 browser user detected. You can now use the provider.
+      let provider = window['ethereum'] || window.web3.currentProvider;
+      //NOTE: must wrap window.etherm to get provider, not window.web3
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
+
+      let hat = await contract.getHatByAddress(ethersState.selectedAddress);
+      console.log(hat);
+      setEthersState({
+        ...ethersState,
+        hat: hat
+      });
+    }
+  }
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  function handleClick(event) {
+    getHatByAddress();
+    getAccount();
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleClose() {
+    setAnchorEl(null);
+  }
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   return (
     <div className="App">
-      <Layout>
-        <PromptArea
-          providerName={providerName}
-          principal={principal}
-          tributeRequired={tributeRequired}
-          isTributeFlowing={true}
+      <Button aria-describedby={id} variant="contained" onClick={handleClick}>
+        Open Tribute
+      </Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+      >
+        <Widget
+          hat={ethersState.hat}
+          dappAddress={DAPP_ADDRESS}
+          account={ethersState.selectedAddress}
         />
-        {getButton()}
-        <Report flowTotal={flowTotal} providerName={providerName} />
-      </Layout>
+      </Popover>
     </div>
   );
 }
