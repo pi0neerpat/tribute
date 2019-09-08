@@ -9,9 +9,8 @@ import TableRow from '@material-ui/core/TableRow';
 const BigNumber = require('bignumber.js');
 
 export default function TributeInactive({ services }) {
-
   function convertToFixed(number) {
-    return new BigNumber(number).toFixed(2)
+    return new BigNumber(number).toFixed(2);
   }
 
   console.log(services);
@@ -31,7 +30,9 @@ export default function TributeInactive({ services }) {
               {item.address.substring(0, 6)}...
             </a>
           </TableCell>
-          <TableCell align="right">{convertToFixed(item.tributeRequired)} DAI</TableCell>
+          <TableCell align="right">
+            {convertToFixed(item.tributeRequired)} DAI
+          </TableCell>
         </TableRow>
       );
     });
@@ -41,10 +42,12 @@ export default function TributeInactive({ services }) {
       <br />
       <br />
       <br />
-      <Typography variant="h4">
+      <div style={{ display: 'flex' }}>
         <img src={calm} width={80} />
-        Inactive Tributes
-      </Typography>
+        <Typography style={{ margin: '10px 0 0 10px' }} variant="h4">
+          Inactive Tributes
+        </Typography>
+      </div>
 
       <Table>
         <TableBody>{inactives}</TableBody>
