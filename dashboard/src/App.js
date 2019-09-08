@@ -1,12 +1,13 @@
-import React from 'react';
-import './App.css';
+import React, { useState, useEffect, useContext } from 'react';
+import { EthersContext, EthersContextProvider } from './EthersContext.js';
+import View from './View.js';
 
 function App() {
-  return (
-    <div>
-        hello world
-    </div>
-  );
+    return (
+        <EthersContextProvider>
+          <View/>
+        </EthersContextProvider>
+    );
 }
 
 export default App;
