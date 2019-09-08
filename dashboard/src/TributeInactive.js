@@ -6,8 +6,14 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+const BigNumber = require('bignumber.js');
 
 export default function TributeInactive({ services }) {
+
+  function convertToFixed(number) {
+    return new BigNumber(number).toFixed(2)
+  }
+
   console.log(services);
 
   let inactives = services
@@ -25,7 +31,7 @@ export default function TributeInactive({ services }) {
               {item.address.substring(0, 6)}...
             </a>
           </TableCell>
-          <TableCell align="right">{item.tributeRequired} DAI</TableCell>
+          <TableCell align="right">{convertToFixed(item.tributeRequired)} DAI</TableCell>
         </TableRow>
       );
     });
