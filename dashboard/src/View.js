@@ -31,7 +31,14 @@ function View() {
     }
   }, [ethersContext]);
 
-  console.log(ethersContext.contract);
+  async function getHatByAddress() {
+    if (ethersContext.contract !== undefined) {
+      let hat = await ethersContext.contract.getHatByAddress(selectedAddress);
+      console.log(hat);
+    }
+  }
+
+  getHatByAddress();
 
   return (
     <div>
