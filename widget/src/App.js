@@ -4,7 +4,6 @@ import { ethers } from 'ethers';
 import urnFull from './assets/urn-full.png';
 import urn from './assets/urn.png';
 import mario from './assets/mario.jpeg';
-import web3 from './ethereum/web3';
 import rDAIContract from './contracts/rDAI.abi.json';
 import Widget from './components/Widget';
 import {
@@ -16,32 +15,15 @@ import {
 } from '@material-ui/core';
 
 function App() {
-  const [ethersState, setEthersState] = useState({
-    selectedAddress: ''
-  });
+  const [selectedAddress, setSelectedAddress] = useState();
+  const [provider, setProvider] = useState();
+  const [hat, setHat] = useState();
+  const [principal, setPrincipal] = useState();
   const RDAI_ADDRESS = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
   const DAPP_ADDRESS = '0x1EEEe046f7722b0C7F04eCc457Dc5CF69f4fbA99';
-  const isTributeFlowing = true;
+  const [tributeFlowing, setTributeFlowing] = useState(false);
 
-  async function getAccount() {
-    try {
-      if (ethersState.selectedAddress === undefined) {
-        console.log('No selected address, requesting log in');
-        let account = await window.ethereum.enable();
-        console.log('Selected Address is: ' + account[0]);
-        setEthersState({
-          ...ethersState,
-          selectedAddress: account[0]
-        });
-      } else {
-        console.log('Selected Address is: ' + ethersState.selectedAddress);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function getHatByAddress() {
+  useEffect(() => {
     if (
       typeof window.ethereum !== 'undefined' ||
       typeof window.web3 !== 'undefined'
@@ -51,20 +33,48 @@ function App() {
       let provider = window['ethereum'] || window.web3.currentProvider;
       //NOTE: must wrap window.etherm to get provider, not window.web3
       provider = new ethers.providers.Web3Provider(window.ethereum);
-      let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
-
-      let hat = await contract.getHatByAddress(ethersState.selectedAddress);
-      console.log(hat);
-      setEthersState({
-        ...ethersState,
-        hat: hat
-      });
+      setProvider(provider);
+      let address = getAccount();
+      getHatByAddress(address, provider);
+      getPrincipal(address, provider);
     }
+  }, []);
+
+  async function getPrincipal(selectedAddress, provider) {
+    let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
+    let principal = await contract.balanceOf(selectedAddress);
+    setPrincipal(principal);
+  }
+
+  async function getAccount() {
+    try {
+      if (selectedAddress === undefined) {
+        console.log('No selected address, requesting log in');
+        let account = await window.ethereum.enable();
+        console.log('Selected Address is: ' + account[0]);
+        setSelectedAddress(account[0]);
+        return account[0];
+      } else {
+        console.log('Selected Address is: ' + selectedAddress);
+        return selectedAddress;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function getHatByAddress(selectedAddress, provider) {
+    let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
+    let hat = await contract.getHatByAddress(selectedAddress);
+    if (hat.hatID.toNumber() === 21) {
+      setTributeFlowing(true);
+    }
+    setHat(hat);
   }
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   function handleClick(event) {
-    getHatByAddress();
+    getHatByAddress(selectedAddress, provider);
     getAccount();
     setAnchorEl(event.currentTarget);
   }
@@ -84,15 +94,13 @@ function App() {
             🎮 Gamez.com
           </Typography>
           <Button
-            float="right"
             size="large"
             aria-describedby={id}
             variant="contained"
             onClick={handleClick}
-            style={{ marginLeft: 50 }}
           >
             <img
-              src={isTributeFlowing ? urnFull : urn}
+              src={tributeFlowing ? urnFull : urn}
               width={20}
               style={{ paddingRight: 5 }}
             />{' '}
@@ -117,9 +125,15 @@ function App() {
         }}
       >
         <Widget
-          hat={ethersState.hat}
+          hat={hat}
           dappAddress={DAPP_ADDRESS}
-          account={ethersState.selectedAddress}
+          rDAIAddress={RDAI_ADDRESS}
+          rDAIContractAbi={rDAIContract}
+          account={selectedAddress}
+          provider={provider}
+          tributeFlowing={tributeFlowing}
+          setTributeFlowing={setTributeFlowing}
+          principal={principal}
         />
       </Popover>
       <img src={mario} width={400} style={{ margin: 40 }} />
