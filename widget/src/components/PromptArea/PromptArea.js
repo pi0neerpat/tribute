@@ -1,43 +1,56 @@
 import React from 'react';
-import { Button, Grid, Card, Heading } from '@material-ui/core'
+import { Button, Grid, Card, Heading } from '@material-ui/core';
 
-const TRIBUTE_HELPER = "DAI tokens will never leave your wallet. The interest from this tribute will flow to Super Marzio."
+const getTributePrompt1 = name => {
+  return `To access ${name} you need to Tribute`;
+};
+const getTributePrompt2 = amount => {
+  return `of your ${amount} Unallocated DAI, while you have access`;
+};
 
-const getTributePrompt1 = (name) => {
-  return `To access ${name} you need to Tribute`
-}
-const getTributePrompt2 = (amount) => {
-  return `of your ${amount} Unallocated DAI, while you have access`
-}
+const getTributePrompt3 = name => {
+  return `DAI tokens will never leave your wallet. The interest from this tribute will flow to ${name} until you choose to end the tribute.`;
+};
 
-const ActionArea = ({providerName, principal, tributeRequired}) => {
+const PromptArea = ({
+  providerName,
+  principal,
+  tributeRequired,
+  isTributeFlowing
+}) => {
+  let currentStage = 0;
 
-return (
-  <div >
+  const tributePrompt = () => {
+    return (
+      <Grid
+        container
+        direction="column"
+        alignContent="center"
+        alignItems="center"
+      >
+        <Grid item xs>
+          {getTributePrompt1(providerName)}
+        </Grid>
+        <Card raised>{tributeRequired}</Card>
+        <Grid item xs>
+          {getTributePrompt2(principal)}
+        </Grid>
+        <Grid item xs>
+          {getTributePrompt3(providerName)}
+        </Grid>
+      </Grid>
+    );
+  };
 
-  <Grid container direction="row" alignContent="center" alignItems="center">
-  <Grid item>
-{getTributePrompt1(providerName)}
-<Card raised>
+  const flowingPrompt = () => {
+    return <div>tribute is flowing to {providerName}</div>;
+  };
 
+  const displayStage = () => {
+    return isTributeFlowing ? flowingPrompt() : tributePrompt();
+  };
 
-{tributeRequired}
-</Card>
-{getTributePrompt2(principal)}
-{TRIBUTE_HELPER}
+  return <div>{displayStage()}</div>;
+};
 
-  </Grid>
-
-
-</Grid>
-
-<Button variant="contained" color="primary">
-Hello World
-</Button>
-
-${props.children}
-  </div>
-)
-}
-
-export default ActionArea;
+export default PromptArea;

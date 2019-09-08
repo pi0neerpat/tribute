@@ -1,3 +1,3 @@
-import ActionArea from './ActionArea';
+import PromptArea from './PromptArea';
 
-export default ActionArea;
+export default PromptArea;
