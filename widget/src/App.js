@@ -11,6 +11,7 @@ function App() {
   const [selectedAddress, setSelectedAddress] = useState();
   const [provider, setProvider] = useState();
   const [hat, setHat] = useState();
+  const [principal, setPrincipal] = useState();
   const RDAI_ADDRESS = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
   const DAPP_ADDRESS = '0x1EEEe046f7722b0C7F04eCc457Dc5CF69f4fbA99';
   const [tributeFlowing, setTributeFlowing] = useState(false);
@@ -26,8 +27,15 @@ function App() {
       setProvider(provider);
       let address = getAccount();
       getHatByAddress(address, provider)
+      getPrincipal(address, provider)
     }
   }, []);
+
+  async function getPrincipal(selectedAddress, provider) {
+    let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider)
+    let principal = await contract.balanceOf(selectedAddress);
+    setPrincipal(principal)
+  }
 
   async function getAccount() {
     try {
@@ -108,6 +116,7 @@ function App() {
           provider={provider}
           tributeFlowing={tributeFlowing}
           setTributeFlowing={setTributeFlowing}
+          principal={principal}
         />
       </Popover>
     </div>

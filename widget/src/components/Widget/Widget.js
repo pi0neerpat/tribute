@@ -4,20 +4,22 @@ import PromptArea from '../PromptArea';
 import Report from '../Report';
 import { ethers } from 'ethers';
 import { Button } from '@material-ui/core';
+const BigNumber = require('bignumber.js');
 
-const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider, tributeFlowing, setTributeFlowing }) => {
+const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider, tributeFlowing, setTributeFlowing, principal }) => {
   const prompt = 'To access';
   const providerName = 'Super Marzio';
-  const principal = 500;
   const tributeRequired = 100;
   const flowTotal = 0;
 
   let signer = provider.getSigner()
   let contract = new ethers.Contract(rDAIAddress, rDAIContractAbi, signer);
 
-  async function toggleTribute() {
+  let bigPrincipal = new BigNumber(principal.toString());
+  let normP = bigPrincipal.dividedBy(Math.pow(10, 18)).toFixed(2)
+  console.log(normP)
 
-    console.log(contract)
+  async function toggleTribute() {
 
     if(tributeFlowing) {
       //19 is unallocated
@@ -38,7 +40,7 @@ const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provi
       <Layout>
         <PromptArea
           providerName={providerName}
-          principal={principal}
+          principal={normP}
           tributeRequired={tributeRequired}
           isTributeFlowing={tributeFlowing}
         />
