@@ -24,7 +24,8 @@ function App() {
       //NOTE: must wrap window.etherm to get provider, not window.web3
       provider = new ethers.providers.Web3Provider(window.ethereum);
       setProvider(provider);
-      getAccount();
+      let address = getAccount();
+      getHatByAddress(address, provider)
     }
   }, []);
 
@@ -35,23 +36,28 @@ function App() {
         let account = await window.ethereum.enable();
         console.log('Selected Address is: ' + account[0]);
         setSelectedAddress(account[0])
+        return account[0]
       } else {
         console.log('Selected Address is: ' + selectedAddress);
+        return selectedAddress
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  async function getHatByAddress() {
+  async function getHatByAddress(selectedAddress, provider) {
     let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
     let hat = await contract.getHatByAddress(selectedAddress);
+    if (hat.hatID.toNumber() === 18) {
+      setTributeFlowing(true)
+    }
     setHat(hat)
   }
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   function handleClick(event) {
-    getHatByAddress();
+    getHatByAddress(selectedAddress, provider);
     getAccount();
     setAnchorEl(event.currentTarget);
   }
