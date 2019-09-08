@@ -31,6 +31,21 @@ function View() {
     }
   }, [ethersContext]);
 
+  async function getAccount() {
+    try {
+      if (selectedAddress === undefined) {
+        console.log("No selected address, requesting log in")
+        let account = await window.ethereum.enable();
+        console.log("Selected Address is: " + account[0])
+        setSelectedAddress(account[0]);
+      } else {
+        console.log("Selected Address is: " + selectedAddress);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async function getHatByAddress() {
     if (ethersContext.contract !== undefined) {
       let hat = await ethersContext.contract.getHatByAddress(selectedAddress);
@@ -38,7 +53,7 @@ function View() {
     }
   }
 
-  getHatByAddress();
+  getAccount();
 
   return (
     <div>
