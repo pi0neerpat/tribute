@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import TributeTotals from './TributeTotals';
 import TributeFlows from './TributeFlows';
 import TributeInactive from './TributeInactive';
+//import AdminTools from './AdminTools';
 import rDAIContract from './contracts/rDAI.abi.json'
 
 function View() {
@@ -43,6 +44,7 @@ function View() {
   }, []);
 
 
+  const [interest, setInterest] = useState();
   const [allocated, setAllocated] = useState();
   const [balance, setBalance] = useState();
   const [hats, setHats] = useState();
@@ -50,6 +52,7 @@ function View() {
     if(selectedAddress !== undefined) {
       getAllocatedTribute();
       getBalanceOf();
+     // getInterest();
     }
   }, [selectedAddress])
 
@@ -73,6 +76,14 @@ function View() {
       let principal = await ethersContext.contract.balanceOf(selectedAddress);
       setBalance(principal)
       //console.log("principal: " + principal)
+    }
+  }
+
+  async function getInterest() {
+    if (ethersContext.contract !== undefined) {
+      let interest = await ethersContext.contract.interestPayableOf(selectedAddress)
+      setInterest(interest)
+      //console.log("interest: " + interest)
     }
   }
 
@@ -109,15 +120,7 @@ function View() {
     <div>
       { balance !== undefined && allocated !== undefined  && renderTributeTotals() }
       { hats !== undefined && renderFlows() }
-      <TributeInactive services = { services } />
-
-      <div>
-        Dapp Admin Tools
-      </div>
-      <div>
-        github
-        twitter
-      </div>
+      <TributeInactive services={ services } />
     </div>
   );
 }
