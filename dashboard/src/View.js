@@ -103,6 +103,7 @@ function View() {
     return (
       <TributeTotals 
         principal={ balance }
+        hats = { hats }
         allocated={ allocated }
       />
     )
@@ -118,7 +119,7 @@ function View() {
 
   return (
     <div>
-      { balance !== undefined && allocated !== undefined  && renderTributeTotals() }
+      { balance !== undefined && allocated !== undefined && renderTributeTotals() }
       { hats !== undefined && renderFlows() }
       <TributeInactive services={ services } />
     </div>
