@@ -62,26 +62,32 @@ function View() {
     if (ethersContext.contract !== undefined) {
       let principal = await ethersContext.contract.balanceOf(selectedAddress);
       setBalance(principal)
-      console.log(principal)
+      //console.log("principal: " + principal)
     }
   }
 
   async function getAllocatedTribute() {
     let hat = await ethersContext.contract.getHatByAddress(selectedAddress);
+    let allocated = 0
+    setAllocated(allocated)
     if (hat !== undefined) {
-      setAllocated(hat.proportions[0])
+      allocated = hat.proportions[0]
+      setAllocated(allocated)
     }
-    setAllocated(0)
-    console.log(hat.proportions[0])
+    //console.log("allocated: " + allocated)
+  }
+
+  function renderTributeTotals() {
+      return (<TributeTotals 
+        principal={ balance }
+        allocated={ allocated }
+      />)
   }
 
 
   return (
     <div>
-      <TributeTotals 
-        principal = { balance }
-        unallocated = { allocated }
-      />
+      { balance !== undefined && allocated !== undefined  && renderTributeTotals() }
       <div>
         hat data
       </div>

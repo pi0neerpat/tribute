@@ -1,10 +1,12 @@
 import React from 'react';
-export default function TributeTotals({ principal, unallocated }) {
+export default function TributeTotals({ principal, allocated }) {
   return(
     <div>
       Tribute
-      Principal
-      Unallocated Tribute
+      <br/>
+      Principal: { principal.toString() }
+      <br/>
+      Allocated Tribute: { allocated.toString() }
     </div>
   );
 }
