@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { EthersContext } from './EthersContext.js';
 import { ethers } from 'ethers';
 import TributeTotals from './TributeTotals';
+import TributeFlows from './TributeFlows';
 import rDAIContract from './contracts/rDAI.abi.json'
 
 function View() {
@@ -36,6 +37,7 @@ function View() {
 
   const [allocated, setAllocated] = useState();
   const [balance, setBalance] = useState();
+  const [hats, setHats] = useState();
   useEffect(() => {
     if(selectedAddress !== undefined) {
       getAllocatedTribute();
@@ -67,30 +69,40 @@ function View() {
   }
 
   async function getAllocatedTribute() {
-    let hat = await ethersContext.contract.getHatByAddress(selectedAddress);
+    let hats = await ethersContext.contract.getHatByAddress(selectedAddress);
+    setHats(hats)
     let allocated = 0
     setAllocated(allocated)
-    if (hat !== undefined) {
-      allocated = hat.proportions[0]
+    if (hats !== undefined) {
+      allocated = hats.proportions[0]
       setAllocated(allocated)
     }
     //console.log("allocated: " + allocated)
   }
 
   function renderTributeTotals() {
-      return (<TributeTotals 
+    return (
+      <TributeTotals 
         principal={ balance }
         allocated={ allocated }
-      />)
+      />
+    )
+  }
+  
+  function renderFlows() {
+    return ( 
+      <TributeFlows
+        hats={hats}
+      />
+    )
   }
 
 
   return (
     <div>
       { balance !== undefined && allocated !== undefined  && renderTributeTotals() }
-      <div>
-        hat data
-      </div>
+      { hats !== undefined && renderFlows() }
+
       <div>
         Inactive Tributes
       </div>

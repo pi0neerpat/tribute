@@ -7,6 +7,8 @@ export default function TributeTotals({ principal, allocated }) {
       Principal: { principal.toString() }
       <br/>
       Allocated Tribute: { allocated.toString() }
+      <br/>
+      <br/>
     </div>
   );
 }
