@@ -66,7 +66,7 @@ export default function TributeTotals({ principal, hats }) {
                     {unallocated} DAI
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">
-                    Allocated Tribute
+                    Unallocated Tribute
                   </Typography>
                 </Grid>
               </Grid>
