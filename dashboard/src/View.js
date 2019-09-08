@@ -3,12 +3,20 @@ import { EthersContext } from './EthersContext.js';
 import { ethers } from 'ethers';
 import TributeTotals from './TributeTotals';
 import TributeFlows from './TributeFlows';
+import TributeInactive from './TributeInactive';
 import rDAIContract from './contracts/rDAI.abi.json'
 
 function View() {
   const [ethersContext, setEthersContext] = useContext(EthersContext);
   const [selectedAddress, setSelectedAddress] = useState();
   const rDAIAddress = "0xeA718E4602125407fAfcb721b7D760aD9652dfe7";
+  let services =
+    [ 
+      { name: "T", address: "0x0", status: false },
+      { name: "T", address: "0x0", status: false },
+      { name: "T", address: "0x0", status: false },
+      { name: "T", address: "0x0", status: false }
+   ];
 
   // Detect when account changes
   window.ethereum.on('accountsChanged', function (accounts) {
@@ -97,15 +105,12 @@ function View() {
     )
   }
 
-
   return (
     <div>
       { balance !== undefined && allocated !== undefined  && renderTributeTotals() }
       { hats !== undefined && renderFlows() }
+      <TributeInactive services = { services } />
 
-      <div>
-        Inactive Tributes
-      </div>
       <div>
         Dapp Admin Tools
       </div>
