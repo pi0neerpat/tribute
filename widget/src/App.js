@@ -3,10 +3,17 @@ import { ethers } from 'ethers';
 
 import urnFull from './assets/urn-full.png';
 import urn from './assets/urn.png';
+import mario from './assets/mario.jpeg';
 import web3 from './ethereum/web3';
 import rDAIContract from './contracts/rDAI.abi.json';
 import Widget from './components/Widget';
-import { Button, Popover, Typography } from '@material-ui/core';
+import {
+  Button,
+  Popover,
+  Typography,
+  AppBar,
+  Toolbar
+} from '@material-ui/core';
 
 function App() {
   const [ethersState, setEthersState] = useState({
@@ -71,19 +78,29 @@ function App() {
 
   return (
     <div className="App">
-      <Button
-        size="large"
-        aria-describedby={id}
-        variant="contained"
-        onClick={handleClick}
-      >
-        <img
-          src={isTributeFlowing ? urnFull : urn}
-          width={20}
-          style={{ paddingRight: 5 }}
-        />{' '}
-        Tribute
-      </Button>
+      <AppBar position="relative">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" noWrap>
+            🎮 Gamez.com
+          </Typography>
+          <Button
+            float="right"
+            size="large"
+            aria-describedby={id}
+            variant="contained"
+            onClick={handleClick}
+            style={{ marginLeft: 50 }}
+          >
+            <img
+              src={isTributeFlowing ? urnFull : urn}
+              width={20}
+              style={{ paddingRight: 5 }}
+            />{' '}
+            Tribute
+          </Button>
+        </Toolbar>
+      </AppBar>
+
       <Popover
         id={id}
         // open={true}
@@ -105,6 +122,7 @@ function App() {
           account={ethersState.selectedAddress}
         />
       </Popover>
+      <img src={mario} width={400} style={{ margin: 40 }} />
     </div>
   );
 }
