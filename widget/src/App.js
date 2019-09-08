@@ -3,9 +3,16 @@ import { ethers } from 'ethers';
 
 import urnFull from './assets/urn-full.png';
 import urn from './assets/urn.png';
+import mario from './assets/mario.jpeg';
 import rDAIContract from './contracts/rDAI.abi.json';
 import Widget from './components/Widget';
-import { Button, Popover, Typography } from '@material-ui/core';
+import {
+  Button,
+  Popover,
+  Typography,
+  AppBar,
+  Toolbar
+} from '@material-ui/core';
 
 function App() {
   const [selectedAddress, setSelectedAddress] = useState();
@@ -17,24 +24,26 @@ function App() {
   const [tributeFlowing, setTributeFlowing] = useState(false);
 
   useEffect(() => {
-    if (typeof window.ethereum !== 'undefined'
-      || (typeof window.web3 !== 'undefined')) {
+    if (
+      typeof window.ethereum !== 'undefined' ||
+      typeof window.web3 !== 'undefined'
+    ) {
       console.log(window.web3.version);
       // Web3 browser user detected. You can now use the provider.
-      let provider = window['ethereum'] || window.web3.currentProvider
+      let provider = window['ethereum'] || window.web3.currentProvider;
       //NOTE: must wrap window.etherm to get provider, not window.web3
       provider = new ethers.providers.Web3Provider(window.ethereum);
       setProvider(provider);
       let address = getAccount();
-      getHatByAddress(address, provider)
-      getPrincipal(address, provider)
+      getHatByAddress(address, provider);
+      getPrincipal(address, provider);
     }
   }, []);
 
   async function getPrincipal(selectedAddress, provider) {
-    let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider)
+    let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
     let principal = await contract.balanceOf(selectedAddress);
-    setPrincipal(principal)
+    setPrincipal(principal);
   }
 
   async function getAccount() {
@@ -43,11 +52,11 @@ function App() {
         console.log('No selected address, requesting log in');
         let account = await window.ethereum.enable();
         console.log('Selected Address is: ' + account[0]);
-        setSelectedAddress(account[0])
-        return account[0]
+        setSelectedAddress(account[0]);
+        return account[0];
       } else {
         console.log('Selected Address is: ' + selectedAddress);
-        return selectedAddress
+        return selectedAddress;
       }
     } catch (error) {
       console.log(error);
@@ -58,9 +67,9 @@ function App() {
     let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
     let hat = await contract.getHatByAddress(selectedAddress);
     if (hat.hatID.toNumber() === 21) {
-      setTributeFlowing(true)
+      setTributeFlowing(true);
     }
-    setHat(hat)
+    setHat(hat);
   }
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -79,19 +88,28 @@ function App() {
 
   return (
     <div className="App">
-      <Button
-        size="large"
-        aria-describedby={id}
-        variant="contained"
-        onClick={handleClick}
-      >
-        <img
-          src={tributeFlowing ? urnFull : urn}
-          width={20}
-          style={{ paddingRight: 5 }}
-        />{' '}
-        Tribute
-      </Button>
+      <AppBar position="relative">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" noWrap>
+            🎮 Gamez.com
+          </Typography>
+          <Button
+            style={{ margin: '0 0 0 50px' }}
+            size="large"
+            aria-describedby={id}
+            variant="contained"
+            onClick={handleClick}
+          >
+            <img
+              src={tributeFlowing ? urnFull : urn}
+              width={20}
+              style={{ paddingRight: 5 }}
+            />{' '}
+            Tribute
+          </Button>
+        </Toolbar>
+      </AppBar>
+
       <Popover
         id={id}
         // open={true}
@@ -119,6 +137,7 @@ function App() {
           principal={principal}
         />
       </Popover>
+      <img src={mario} width={400} style={{ margin: 40 }} />
     </div>
   );
 }

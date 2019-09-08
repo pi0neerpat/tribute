@@ -3,6 +3,7 @@ import { Grid, Button, Typography, Card } from '@material-ui/core';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
+import TableHead from '@material-ui/core/TableHead';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 
@@ -10,7 +11,6 @@ import flowing from './assets/flowing.png';
 const BigNumber = require('bignumber.js');
 
 export default function TributeFlows({ principal, hats, services }) {
-
   let bigPrincipal = new BigNumber(principal.toString());
   let normPrincipal = bigPrincipal.dividedBy(Math.pow(10, 18)).toFixed(2);
 
@@ -23,7 +23,7 @@ export default function TributeFlows({ principal, hats, services }) {
   function computeNormPortion(proportion) {
     let allocatedStr = ((proportion / sum) * normPrincipal).toString();
     let allocated = new BigNumber(allocatedStr).toFixed(2);
-    return allocated
+    return allocated;
   }
 
   const getHatName = address => {
@@ -41,13 +41,20 @@ export default function TributeFlows({ principal, hats, services }) {
     <div>
       <br />
       <br />
-
-      <Typography variant="h4">
+      <div style={{ display: 'flex' }}>
         <img src={flowing} width={80} />
-        Tribute Flows
-      </Typography>
-
+        <Typography style={{ margin: '10px 0 0 10px' }} variant="h4">
+          Tribute Flows
+        </Typography>
+      </div>
       <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Publisher</TableCell>
+            <TableCell>Address</TableCell>
+            <TableCell align="right">Tribute Required</TableCell>
+          </TableRow>
+        </TableHead>
         <TableBody>
           {hats.recipients.map((hat, index) => {
             if (index === 0) return;

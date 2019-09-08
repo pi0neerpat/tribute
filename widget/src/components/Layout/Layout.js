@@ -46,7 +46,6 @@ const Layout = props => (
         </Button>
       </Grid>
       <p>
-        Tribute -{' '}
         <a href="https://t.me/tributemoney" target="_blank">
           support
         </a>
