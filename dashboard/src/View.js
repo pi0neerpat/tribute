@@ -1,12 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { EthersContext } from './EthersContext.js';
 import { ethers } from 'ethers';
+import TributeTotals from './TributeTotals';
+import TributeFlows from './TributeFlows';
+import TributeInactive from './TributeInactive';
+//import AdminTools from './AdminTools';
 import rDAIContract from './contracts/rDAI.abi.json'
 
 function View() {
   const [ethersContext, setEthersContext] = useContext(EthersContext);
   const [selectedAddress, setSelectedAddress] = useState();
   const rDAIAddress = "0xeA718E4602125407fAfcb721b7D760aD9652dfe7";
+  let services =
+    [ 
+      { name: "T", address: "0x0", status: false },
+      { name: "T", address: "0x0", status: false },
+      { name: "T", address: "0x0", status: false },
+      { name: "T", address: "0x0", status: false }
+   ];
 
   // Detect when account changes
   window.ethereum.on('accountsChanged', function (accounts) {
@@ -28,8 +39,22 @@ function View() {
       if (ethersContext.contract === undefined) {
         setEthersContext(state => ({ ...ethersContext, contract }));
       }
+      getAccount();
     }
-  }, [ethersContext]);
+  }, []);
+
+
+  const [interest, setInterest] = useState();
+  const [allocated, setAllocated] = useState();
+  const [balance, setBalance] = useState();
+  const [hats, setHats] = useState();
+  useEffect(() => {
+    if(selectedAddress !== undefined) {
+      getAllocatedTribute();
+      getBalanceOf();
+     // getInterest();
+    }
+  }, [selectedAddress])
 
   async function getAccount() {
     try {
@@ -46,18 +71,56 @@ function View() {
     }
   }
 
-  async function getHatByAddress() {
+  async function getBalanceOf() {
     if (ethersContext.contract !== undefined) {
-      let hat = await ethersContext.contract.getHatByAddress(selectedAddress);
-      console.log(hat);
+      let principal = await ethersContext.contract.balanceOf(selectedAddress);
+      setBalance(principal)
+      //console.log("principal: " + principal)
     }
   }
 
-  getAccount();
+  async function getInterest() {
+    if (ethersContext.contract !== undefined) {
+      let interest = await ethersContext.contract.interestPayableOf(selectedAddress)
+      setInterest(interest)
+      //console.log("interest: " + interest)
+    }
+  }
+
+  async function getAllocatedTribute() {
+    let hats = await ethersContext.contract.getHatByAddress(selectedAddress);
+    setHats(hats)
+    let allocated = 0
+    setAllocated(allocated)
+    if (hats !== undefined) {
+      allocated = hats.proportions[0]
+      setAllocated(allocated)
+    }
+    //console.log("allocated: " + allocated)
+  }
+
+  function renderTributeTotals() {
+    return (
+      <TributeTotals 
+        principal={ balance }
+        allocated={ allocated }
+      />
+    )
+  }
+  
+  function renderFlows() {
+    return ( 
+      <TributeFlows
+        hats={hats}
+      />
+    )
+  }
 
   return (
     <div>
-      hello
+      { balance !== undefined && allocated !== undefined  && renderTributeTotals() }
+      { hats !== undefined && renderFlows() }
+      <TributeInactive services={ services } />
     </div>
   );
 }
