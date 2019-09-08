@@ -131,7 +131,9 @@ function View() {
   }
 
   function renderTributeTotals() {
-    return <TributeTotals principal={balance} allocated={allocated} />;
+    return (
+      <TributeTotals principal={balance} hats={hats} allocated={allocated} />
+    );
   }
 
   function renderFlows() {

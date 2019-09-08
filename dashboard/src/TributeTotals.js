@@ -1,12 +1,27 @@
 import React from 'react';
+
 import { Grid, Button, Typography, Card } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
 import urn from './assets/urn.png';
 import wallet from './assets/wallet.png';
+const BigNumber = require('bignumber.js');
 
-export default function TributeTotals({ principal, allocated }) {
+export default function TributeTotals({ principal, hats }) {
+  let bigPrincipal = new BigNumber(principal.toString());
+  let normPrincipal = bigPrincipal.dividedBy(Math.pow(10, 18)).toFixed(2);
+
+  let sum = 0;
+  hats.proportions.forEach(item => {
+    console.log(item);
+    sum += item;
+  });
+  console.log(sum);
+
+  let unallocatedStr = ((hats.proportions[0] / sum) * normPrincipal).toString();
+  let unallocated = new BigNumber(unallocatedStr).toFixed(2);
+
   return (
     <div style={{ marginTop: 30 }}>
       <Grid container direction="row" alignContent="center" alignItems="center">
@@ -24,7 +39,7 @@ export default function TributeTotals({ principal, allocated }) {
                   </Grid>
                   <Grid item>
                     <Typography component="h5" variant="h5">
-                      {principal.toString()} DAI
+                      {normPrincipal} DAI
                     </Typography>
                     <Typography variant="subtitle1" color="textSecondary">
                       Principal
@@ -48,7 +63,7 @@ export default function TributeTotals({ principal, allocated }) {
                 </Grid>
                 <Grid item>
                   <Typography component="h5" variant="h5">
-                    {allocated.toString()} DAI
+                    {unallocated} DAI
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">
                     Allocated Tribute
