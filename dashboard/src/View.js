@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { EthersContext } from './EthersContext.js';
 import { ethers } from 'ethers';
+import TributeTotals from './TributeTotals';
 import rDAIContract from './contracts/rDAI.abi.json'
 
 function View() {
   const [ethersContext, setEthersContext] = useContext(EthersContext);
   const [selectedAddress, setSelectedAddress] = useState();
+  const [unallocated, setUnallocated] = useState();
+  const [balance, setBalance] = useState();
   const rDAIAddress = "0xeA718E4602125407fAfcb721b7D760aD9652dfe7";
 
   // Detect when account changes
@@ -31,6 +34,12 @@ function View() {
     }
   }, [ethersContext]);
 
+  useEffect(() => {
+    getAccount();
+    getUnallocatedTribute();
+    getBalanceOf();
+  }, [])
+
   async function getAccount() {
     try {
       if (selectedAddress === undefined) {
@@ -46,18 +55,52 @@ function View() {
     }
   }
 
-  async function getHatByAddress() {
+  async function getHatByAddress(address) {
     if (ethersContext.contract !== undefined) {
-      let hat = await ethersContext.contract.getHatByAddress(selectedAddress);
-      console.log(hat);
+      let hat = await ethersContext.contract.getHatByAddress(address);
+      return hat
     }
   }
 
-  getAccount();
+  async function getUnallocatedTribute() {
+    if (ethersContext.contract === undefined) {
+      setUnallocated(0)
+    }
+
+    let hat = await getHatByAddress(selectedAddress);
+    //console.log(hat)
+    if (hat.recipients[0].toUpperCase() === selectedAddress.toUpperCase()) {
+      setUnallocated(hat.proportions[0])
+    }
+    setUnallocated(0)
+  }
+
+  async function getBalanceOf() {
+    if (ethersContext.contract !== undefined) {
+      let principal = await ethersContext.contract.balanceOf(selectedAddress);
+      setBalance(principal)
+    }
+  }
 
   return (
     <div>
-      hello
+      <TributeTotals 
+        principal = { balance }
+        unallocated = { unallocated }
+      />
+      <div>
+        hat data
+      </div>
+      <div>
+        Inactive Tributes
+      </div>
+      <div>
+        Dapp Admin Tools
+      </div>
+      <div>
+        github
+        twitter
+      </div>
     </div>
   );
 }
