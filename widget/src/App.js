@@ -57,7 +57,7 @@ function App() {
   async function getHatByAddress(selectedAddress, provider) {
     let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
     let hat = await contract.getHatByAddress(selectedAddress);
-    if (hat.hatID.toNumber() === 18) {
+    if (hat.hatID.toNumber() === 21) {
       setTributeFlowing(true)
     }
     setHat(hat)

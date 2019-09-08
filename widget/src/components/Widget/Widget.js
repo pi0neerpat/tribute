@@ -9,7 +9,7 @@ const BigNumber = require('bignumber.js');
 const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider, tributeFlowing, setTributeFlowing, principal }) => {
   const prompt = 'To access';
   const providerName = 'Super Marzio';
-  const tributeRequired = 100;
+  const tributeRequired = 876;
   const flowTotal = 0;
 
   let signer = provider.getSigner()
@@ -23,11 +23,11 @@ const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provi
 
     if(tributeFlowing) {
       //19 is unallocated
-      let tx = contract.changeHat(19)
+      let tx = contract.changeHat(13)
       tx = await signer.sendTransaction(tx)
     } else {
       //18 is allocated
-      let tx = contract.changeHat(18)
+      let tx = contract.changeHat(21)
       tx = await signer.sendTransaction(tx)
     }
     //tribute flowing is now off, turn it off
