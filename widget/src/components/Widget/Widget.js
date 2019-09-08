@@ -10,10 +10,12 @@ const Widget = ({ dappAddress, account, hat }) => {
   const principal = 500;
   const tributeRequired = 100;
   const flowTotal = 0;
-  const isTributeFlowing = false;
+  let isTributeFlowing = true;
 
-  const startTribute = () => {
+  const startTribute = () => event => {
     //start tribute
+    console.log('Starting tribute');
+    isTributeFlowing = true;
   };
 
   const endTribute = () => {
@@ -28,14 +30,14 @@ const Widget = ({ dappAddress, account, hat }) => {
       text = 'End Tribute';
     }
     return (
-      <Button variant="contained" color="primary" onClick={action}>
+      <Button size="large" variant="contained" color="primary" onClick={action}>
         {text}
       </Button>
     );
   };
 
   return (
-    <div>
+    <div style={{ width: 300 }}>
       <Layout>
         <PromptArea
           providerName={providerName}

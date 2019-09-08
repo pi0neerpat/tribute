@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
+import urnFull from './assets/urn-full.png';
+import urn from './assets/urn.png';
 import web3 from './ethereum/web3';
 import rDAIContract from './contracts/rDAI.abi.json';
 import Widget from './components/Widget';
@@ -12,6 +14,7 @@ function App() {
   });
   const RDAI_ADDRESS = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
   const DAPP_ADDRESS = '0x1EEEe046f7722b0C7F04eCc457Dc5CF69f4fbA99';
+  const isTributeFlowing = true;
 
   async function getAccount() {
     try {
@@ -68,11 +71,22 @@ function App() {
 
   return (
     <div className="App">
-      <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-        Open Tribute
+      <Button
+        size="large"
+        aria-describedby={id}
+        variant="contained"
+        onClick={handleClick}
+      >
+        <img
+          src={isTributeFlowing ? urnFull : urn}
+          width={20}
+          style={{ paddingRight: 5 }}
+        />{' '}
+        Tribute
       </Button>
       <Popover
         id={id}
+        // open={true}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}

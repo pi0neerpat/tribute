@@ -1,15 +1,20 @@
 import React from 'react';
-import { Button, Grid, Card, Heading } from '@material-ui/core';
+import { Button, Grid, Card, Typography } from '@material-ui/core';
+import flowing from '../../assets/flowing.png';
 
 const getTributePrompt1 = name => {
-  return `To access ${name} you need to Tribute`;
+  return (
+    <Typography variant="body1">
+      To access <b>{name}</b> you need to Tribute
+    </Typography>
+  );
 };
 const getTributePrompt2 = amount => {
-  return `of your ${amount} Unallocated DAI, while you have access`;
+  return `of your ${amount} Unallocated DAI, while you have access.`;
 };
 
 const getTributePrompt3 = name => {
-  return `DAI tokens will never leave your wallet. The interest from this tribute will flow to ${name} until you choose to end the tribute.`;
+  return `DAI tokens will never leave your wallet.\nThe interest from this tribute will flow to ${name} until you choose to end the tribute.`;
 };
 
 const PromptArea = ({
@@ -22,35 +27,63 @@ const PromptArea = ({
 
   const tributePrompt = () => {
     return (
+      <>
+        <Typography variant="body1">
+          {getTributePrompt1(providerName)}
+        </Typography>
+        <Card
+          style={{
+            margin: 8,
+            padding: '10px 20px 10px 20px',
+            backgroundColor: '#99bbe9'
+          }}
+          raised
+        >
+          <Typography variant="h5">
+            <b>{tributeRequired} DAI</b>
+          </Typography>
+        </Card>
+        <Typography variant="body1">{getTributePrompt2(principal)}</Typography>
+        <Card style={{ margin: 10, padding: 10, backgroundColor: '#ECEAEC' }}>
+          <Typography
+            variant="caption"
+            style={{ color: '#867486', lineHeight: 0.5 }}
+          >
+            {getTributePrompt3(providerName)}
+          </Typography>
+        </Card>
+      </>
+    );
+  };
+
+  const flowingPrompt = () => {
+    return (
+      <>
+        <Typography variant="body1">
+          Tribute is flowing to <b>{providerName}</b>
+        </Typography>
+        <img style={{ padding: 20 }} src={flowing} />
+      </>
+    );
+  };
+
+  const displayPrompt = () => {
+    return isTributeFlowing ? flowingPrompt() : tributePrompt();
+  };
+
+  return (
+    <div>
       <Grid
         container
         direction="column"
         alignContent="center"
         alignItems="center"
+        style={{ padding: 10 }}
       >
-        <Grid item xs>
-          {getTributePrompt1(providerName)}
-        </Grid>
-        <Card raised>{tributeRequired}</Card>
-        <Grid item xs>
-          {getTributePrompt2(principal)}
-        </Grid>
-        <Grid item xs>
-          {getTributePrompt3(providerName)}
-        </Grid>
+        {displayPrompt()}
       </Grid>
-    );
-  };
-
-  const flowingPrompt = () => {
-    return <div>tribute is flowing to {providerName}</div>;
-  };
-
-  const displayStage = () => {
-    return isTributeFlowing ? flowingPrompt() : tributePrompt();
-  };
-
-  return <div>{displayStage()}</div>;
+    </div>
+  );
 };
 
 export default PromptArea;
