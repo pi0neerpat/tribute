@@ -1,39 +1,33 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Layout from '../Layout';
 import PromptArea from '../PromptArea';
 import Report from '../Report';
+import { ethers } from 'ethers';
 import { Button } from '@material-ui/core';
 
-const Widget = ({ dappAddress, account, hat }) => {
+const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider }) => {
   const prompt = 'To access';
   const providerName = 'Super Marzio';
   const principal = 500;
   const tributeRequired = 100;
   const flowTotal = 0;
-  let isTributeFlowing = true;
+  const [stateFlowing, setStateFlowing] = useState(false);
 
-  const startTribute = () => event => {
-    //start tribute
-    console.log('Starting tribute');
-    isTributeFlowing = true;
-  };
+  let contract = new ethers.Contract(rDAIAddress, rDAIContractAbi, provider);
 
-  const endTribute = () => {
-    //end tribute
-  };
+  async function toggleTribute() {
 
-  const getButton = () => {
-    let action = startTribute();
-    let text = 'Allocate';
-    if (isTributeFlowing) {
-      action = endTribute();
-      text = 'End Tribute';
+    console.log(contract)
+
+    if(stateFlowing) {
+      //18 is allocated
+      await contract.changeHat(18)
+    } else {
+      //19 is unallocated
+      await contract.changeHat(19)
     }
-    return (
-      <Button size="large" variant="contained" color="primary" onClick={action}>
-        {text}
-      </Button>
-    );
+    setStateFlowing(!stateFlowing)
+    console.log(stateFlowing)
   };
 
   return (
@@ -43,9 +37,11 @@ const Widget = ({ dappAddress, account, hat }) => {
           providerName={providerName}
           principal={principal}
           tributeRequired={tributeRequired}
-          isTributeFlowing={isTributeFlowing}
+          isTributeFlowing={stateFlowing}
         />
-        {getButton()}
+        <Button size="large" variant="contained" color="primary" onClick={toggleTribute}>
+          { stateFlowing ? "End Tribute" : "Allocate Tribute" }
+        </Button>
         <Report flowTotal={flowTotal} providerName={providerName} />
       </Layout>
     </div>

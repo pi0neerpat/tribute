@@ -44,19 +44,9 @@ function App() {
   }
 
   async function getHatByAddress() {
-    if (
-      typeof window.ethereum !== 'undefined' ||
-      typeof window.web3 !== 'undefined'
-    ) {
-      console.log(window.web3.version);
-      // Web3 browser user detected. You can now use the provider.
-      let provider = window['ethereum'] || window.web3.currentProvider;
-      //NOTE: must wrap window.etherm to get provider, not window.web3
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
-      let hat = await contract.getHatByAddress(selectedAddress);
-      setHat(hat)
-    }
+    let contract = new ethers.Contract(RDAI_ADDRESS, rDAIContract, provider);
+    let hat = await contract.getHatByAddress(selectedAddress);
+    setHat(hat)
   }
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -106,7 +96,10 @@ function App() {
         <Widget
           hat={hat}
           dappAddress={DAPP_ADDRESS}
+          rDAIAddress={RDAI_ADDRESS}
+          rDAIContractAbi={rDAIContract}
           account={selectedAddress}
+          provider={provider}
         />
       </Popover>
     </div>
