@@ -5,29 +5,32 @@ import Report from '../Report';
 import { ethers } from 'ethers';
 import { Button } from '@material-ui/core';
 
-const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider }) => {
+const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider, tributeFlowing, setTributeFlowing }) => {
   const prompt = 'To access';
   const providerName = 'Super Marzio';
   const principal = 500;
   const tributeRequired = 100;
   const flowTotal = 0;
-  const [stateFlowing, setStateFlowing] = useState(false);
 
-  let contract = new ethers.Contract(rDAIAddress, rDAIContractAbi, provider);
+  let signer = provider.getSigner()
+  let contract = new ethers.Contract(rDAIAddress, rDAIContractAbi, signer);
 
   async function toggleTribute() {
 
     console.log(contract)
 
-    if(stateFlowing) {
-      //18 is allocated
-      await contract.changeHat(18)
-    } else {
+    if(tributeFlowing) {
       //19 is unallocated
-      await contract.changeHat(19)
+      let tx = contract.changeHat(19)
+      tx = await signer.sendTransaction(tx)
+    } else {
+      //18 is allocated
+      let tx = contract.changeHat(18)
+      tx = await signer.sendTransaction(tx)
     }
-    setStateFlowing(!stateFlowing)
-    console.log(stateFlowing)
+    //tribute flowing is now off, turn it off
+    console.log(!tributeFlowing)
+    setTributeFlowing(!tributeFlowing)
   };
 
   return (
@@ -37,10 +40,10 @@ const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provi
           providerName={providerName}
           principal={principal}
           tributeRequired={tributeRequired}
-          isTributeFlowing={stateFlowing}
+          isTributeFlowing={tributeFlowing}
         />
         <Button size="large" variant="contained" color="primary" onClick={toggleTribute}>
-          { stateFlowing ? "End Tribute" : "Allocate Tribute" }
+          { tributeFlowing ? "End Tribute" : "Allocate Tribute" }
         </Button>
         <Report flowTotal={flowTotal} providerName={providerName} />
       </Layout>

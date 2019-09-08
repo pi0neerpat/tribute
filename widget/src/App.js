@@ -13,7 +13,7 @@ function App() {
   const [hat, setHat] = useState();
   const RDAI_ADDRESS = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
   const DAPP_ADDRESS = '0x1EEEe046f7722b0C7F04eCc457Dc5CF69f4fbA99';
-  const isTributeFlowing = true;
+  const [tributeFlowing, setTributeFlowing] = useState(false);
 
   useEffect(() => {
     if (typeof window.ethereum !== 'undefined'
@@ -72,7 +72,7 @@ function App() {
         onClick={handleClick}
       >
         <img
-          src={isTributeFlowing ? urnFull : urn}
+          src={tributeFlowing ? urnFull : urn}
           width={20}
           style={{ paddingRight: 5 }}
         />{' '}
@@ -100,6 +100,8 @@ function App() {
           rDAIContractAbi={rDAIContract}
           account={selectedAddress}
           provider={provider}
+          tributeFlowing={tributeFlowing}
+          setTributeFlowing={setTributeFlowing}
         />
       </Popover>
     </div>
