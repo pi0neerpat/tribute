@@ -7,8 +7,25 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 
 import flowing from './assets/flowing.png';
+const BigNumber = require('bignumber.js');
 
-export default function TributeFlows({ hats, services }) {
+export default function TributeFlows({ principal, hats, services }) {
+
+  let bigPrincipal = new BigNumber(principal.toString());
+  let normPrincipal = bigPrincipal.dividedBy(Math.pow(10, 18)).toFixed(2);
+
+  let sum = 0;
+  hats.proportions.forEach(item => {
+    console.log(item);
+    sum += item;
+  });
+
+  function computeNormPortion(proportion) {
+    let allocatedStr = ((proportion / sum) * normPrincipal).toString();
+    let allocated = new BigNumber(allocatedStr).toFixed(2);
+    return allocated
+  }
+
   const getHatName = address => {
     let name = 'unknown';
     services.forEach(service => {
@@ -41,11 +58,11 @@ export default function TributeFlows({ hats, services }) {
                 </TableCell>
                 <TableCell scope="row">
                   <a href={`kovan.etherscan.com/${hat}`} target="_blank">
-                    {hat.substring(0, 6)}...
+                    {hat.substring(0, 6)}..
                   </a>
                 </TableCell>
                 <TableCell align="right">
-                  {hats.proportions[index]} DAI
+                  {computeNormPortion(hats.proportions[index])} DAI
                 </TableCell>
               </TableRow>
             );

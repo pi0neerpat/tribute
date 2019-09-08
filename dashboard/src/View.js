@@ -137,7 +137,7 @@ function View() {
   }
 
   function renderFlows() {
-    return <TributeFlows hats={hats} services={services} />;
+    return <TributeFlows principal={balance} hats={hats} services={services} />;
   }
 
   return (
@@ -152,7 +152,8 @@ function View() {
         {balance !== undefined &&
           allocated !== undefined &&
           renderTributeTotals()}
-        {hats !== undefined && renderFlows()}
+        {balance !== undefined &&
+            hats !== undefined && renderFlows()}
         <TributeInactive services={services} />
 
         <Button
