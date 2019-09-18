@@ -1,6 +1,6 @@
 import React from 'react';
 
-const providerName = 'Mario Broskis';
+const providerName = 'Super Mariano Bros.';
 
 const Report = ({ flowTotal }) => {
   if (flowTotal && flowTotal > 0) {

@@ -19,7 +19,7 @@ function View() {
   const rDAIAddress = '0xeA718E4602125407fAfcb721b7D760aD9652dfe7';
   let services = [
     {
-      name: 'Super Marzio',
+      name: 'Super Mariano',
       address: '0x2243cE6fE34ca1e457c5f174be3eCdf8Ae08516f',
       status: false,
       tributeRequired: 876
@@ -79,7 +79,7 @@ function View() {
       if (selectedAddress !== undefined) {
         getAllocatedTribute();
         getBalanceOf();
-        // getInterest();
+        getAccruedInterest();
       }
     },
     [selectedAddress]
@@ -104,17 +104,15 @@ function View() {
     if (ethersContext.contract !== undefined) {
       let principal = await ethersContext.contract.balanceOf(selectedAddress);
       setBalance(principal);
-      //console.log("principal: " + principal)
+      console.log("principal: " + principal)
     }
   }
 
-  async function getInterest() {
+  async function getAccruedInterest() {
     if (ethersContext.contract !== undefined) {
-      let interest = await ethersContext.contract.interestPayableOf(
-        selectedAddress
-      );
+      let interest = await ethersContext.contract.interestPayableOf(selectedAddress);
       setInterest(interest);
-      //console.log("interest: " + interest)
+      console.log("accrued interest: " + interest)
     }
   }
 
@@ -127,12 +125,12 @@ function View() {
       allocated = hats.proportions[0];
       setAllocated(allocated);
     }
-    //console.log("allocated: " + allocated)
+    console.log("allocated: " + allocated)
   }
 
   function renderTributeTotals() {
     return (
-      <TributeTotals principal={balance} hats={hats} allocated={allocated} />
+      <TributeTotals principal={balance} hats={hats} allocated={allocated} interest={interest}/>
     );
   }
 
@@ -164,7 +162,7 @@ function View() {
             variant="contained"
             size="small"
           >
-            Withdraw DAI
+            Move Accrued Interest to Principal
           </Button>
         </div>
         <Button

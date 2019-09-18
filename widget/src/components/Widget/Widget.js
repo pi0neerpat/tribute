@@ -8,7 +8,7 @@ const BigNumber = require('bignumber.js');
 
 const Widget = ({ dappAddress, rDAIAddress, rDAIContractAbi, account, hat, provider, tributeFlowing, setTributeFlowing, principal }) => {
   const prompt = 'To access';
-  const providerName = 'Super Marzio';
+  const providerName = 'Super Mariano Bros.';
   const tributeRequired = 876;
   const flowTotal = 0;
 

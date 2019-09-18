@@ -5,12 +5,15 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
 import urn from './assets/urn.png';
+import urnfull from './assets/urn-full.png';
 import wallet from './assets/wallet.png';
 const BigNumber = require('bignumber.js');
 
-export default function TributeTotals({ principal, hats }) {
+export default function TributeTotals({ principal, hats, interest }) {
   let bigPrincipal = new BigNumber(principal.toString());
   let normPrincipal = bigPrincipal.dividedBy(Math.pow(10, 18)).toFixed(2);
+  let bigInterest = new BigNumber(interest.toString());
+  let normInterest = bigInterest.dividedBy(Math.pow(10, 18)).toFixed(4);
 
   let sum = 0;
   hats.proportions.forEach(item => {
@@ -50,6 +53,7 @@ export default function TributeTotals({ principal, hats }) {
             </div>
           </Card>
         </Grid>
+        <Grid item style={{ marginRight: 20 }}>
         <Card>
           <div>
             <CardContent>
@@ -67,6 +71,30 @@ export default function TributeTotals({ principal, hats }) {
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">
                     Unallocated Tribute
+                  </Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </div>
+        </Card>
+        </Grid>
+        <Card>
+          <div>
+            <CardContent>
+              <Grid container direction="row">
+                <Grid item>
+                  <img
+                    src={urnfull}
+                    width={30}
+                    style={{ padding: '10px 10px 0 0 ' }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography component="h5" variant="h5">
+                    {normInterest} DAI
+                  </Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    Accrued Interest
                   </Typography>
                 </Grid>
               </Grid>
